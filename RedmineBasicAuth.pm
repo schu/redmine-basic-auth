@@ -25,6 +25,9 @@ against a Redmine database
 use strict;
 use warnings FATAL => 'all';
 
+use threads;
+use threads::shared;
+
 use DBI;
 use Digest::SHA1;
 
@@ -127,6 +130,7 @@ sub is_valid {
     $ret;
 }
 
+my %cache :shared;
 sub db_connect {
     my $r = shift;
 
@@ -135,7 +139,8 @@ sub db_connect {
 
     return DBI->connect($cfg->{RedmineBasicAuthDSN},
                         $cfg->{RedmineBasicAuthDbUser},
-                        $cfg->{RedmineBasicAuthDbPass});
+                        $cfg->{RedmineBasicAuthDbPass},
+                        \%cache);
 }
 
 1;

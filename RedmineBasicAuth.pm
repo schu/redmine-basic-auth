@@ -30,6 +30,7 @@ use Digest::SHA1;
 
 use Apache2::Access;
 use Apache2::Module;
+use Apache2::RequestRec;
 use Apache2::Const qw(AUTH_REQUIRED OK OR_AUTHCFG TAKE1);
 
 my @directives = (

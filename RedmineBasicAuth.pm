@@ -101,6 +101,10 @@ sub is_valid {
     my $redmine_pass = shift;
     my $r = shift;
 
+    if (!$redmine_user) {
+        return;
+    }
+
     my $redmine_pass_hash = Digest::SHA1::sha1_hex($redmine_pass);
 
     my $dbh = db_connect($r);

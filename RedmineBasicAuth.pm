@@ -60,7 +60,8 @@ sub RedmineBasicAuthDSN {
 
     $self->{RedmineBasicAuthDSN} = $arg;
 
-    my $query = "SELECT hashed_password FROM users
+    my $query = "SELECT hashed_password, salt
+                 FROM users
                  WHERE login = ?";
 
     $self->{RedmineBasicAuthQuery} = trim($query);
@@ -118,8 +119,10 @@ sub is_valid {
     $sth->execute($redmine_user);
 
     my $ret;
-    while (my ($hashed_password) = $sth->fetchrow_array) {
-        if ($hashed_password eq $redmine_pass_hash) {
+    while (my ($hashed_password, $salt) = $sth->fetchrow_array) {
+        my $redmine_salted_hash =
+            Digest::SHA1::sha1_hex($salt.$redmine_pass_hash);
+        if ($hashed_password eq $redmine_salted_hash) {
             $ret = 1;
             last;
         }
